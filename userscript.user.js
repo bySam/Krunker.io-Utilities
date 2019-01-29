@@ -47,6 +47,7 @@ class Utilities {
             customCrosshairThickness: 2,
             customCrosshairOutline: 0,
             customCrosshairOutlineColor: "#000000",
+            customCrosshairGap: 0,
             antiGuest: false,
             showKills: true,
             showMessages: true,
@@ -157,7 +158,7 @@ class Utilities {
                 name: "Color",
                 val: "#ffffff",
                 html() {
-                    return `<input type='color' id='crosshairColor' name='color' value='${self.settingsMenu.customCrosshairColor.val}' oninput='window.utilities.setSetting("customCrosshairColor", this.value)' style='float:right;margin-top:5px'/>` 
+                    return `<input type='color' id='crosshairColor' name='color' value='${self.settingsMenu.customCrosshairColor.val}' oninput='window.utilities.setSetting("customCrosshairColor", this.value)' style='float:right;margin-top:5px'/>`
                 },
                 set(t) {
                     self.settings.customCrosshairColor = t;
@@ -183,6 +184,16 @@ class Utilities {
                     self.settings.customCrosshairThickness = parseInt(t);
                 }
             },
+            customCrosshairGap: {
+                name: "Gap",
+                val: 0,
+                html() {
+                    return `<span class='sliderVal' id='slid_utilities_customCrosshairGap'>${self.settingsMenu.customCrosshairGap.val}</span><div class='slidecontainer'><input type='range' min='0' max='20' step='1' value='${self.settingsMenu.customCrosshairGap.val}' class='sliderM' oninput="window.utilities.setSetting('customCrosshairGap', this.value)"></div>`
+                },
+                set(t) {
+                    self.settings.customCrosshairGap = parseInt(t);
+                }
+            },
             customCrosshairOutline: {
                 name: "Outline",
                 val: 0,
@@ -197,12 +208,13 @@ class Utilities {
                 name: "Outline Color",
                 val: "#000000",
                 html() {
-                    return `<input type='color' id='crosshairOutlineColor' name='color' value='${self.settingsMenu.customCrosshairOutlineColor.val}' oninput='window.utilities.setSetting("customCrosshairOutlineColor", this.value)' style='float:right;margin-top:5px'/>` 
+                    return `<input type='color' id='crosshairOutlineColor' name='color' value='${self.settingsMenu.customCrosshairOutlineColor.val}' oninput='window.utilities.setSetting("customCrosshairOutlineColor", this.value)' style='float:right;margin-top:5px'/>`
                 },
                 set(t) {
                     self.settings.customCrosshairOutlineColor = t;
                 }
             },
+
             antiGuest: {
                 name: "Auto Kick Guests",
                 pre: "<div class='setHed'>Custom Games</div>",
@@ -318,7 +330,7 @@ class Utilities {
         this.ctx.closePath();
         this.ctx.restore();
     }
-    
+
     circle(x, y, r, w, color) {
         this.ctx.save();
         this.ctx.beginPath();
@@ -342,22 +354,41 @@ class Utilities {
 
     drawCrosshair() {
         if (this.settings.customCrosshair == 0) return;
-        
+
         let thickness = this.settings.customCrosshairThickness;
         let outline = this.settings.customCrosshairOutline;
         let length = this.settings.customCrosshairLength;
+        let gap = this.settings.customCrosshairGap;
 
         let cx = (this.canvas.width / 2);
         let cy = (this.canvas.height / 2);
 
         if (this.settings.customCrosshairShape == 0) {
             if (outline > 0) {
-                this.rect(cx - length - outline, cy - (thickness / 2) - outline, 0, 0, (length * 2) + (outline * 2), thickness + (outline * 2), this.settings.customCrosshairOutlineColor, true);
-                this.rect(cx - (thickness * 0.50) - outline, cy - length - outline, 0, 0, thickness + (outline * 2), (length * 2) + (outline * 2), this.settings.customCrosshairOutlineColor, true);
+                if (gap > 0){
+                    this.rect(cx-length-gap-outline, cy-(thickness/2)-(outline) , 0 , 0, length+(outline*2), thickness+(outline*2), this.settings.customCrosshairOutlineColor, true);
+                    this.rect(cx+gap-outline, cy-(thickness/2)-(outline), 0 , 0, length+(outline*2), thickness+(outline*2), this.settings.customCrosshairOutlineColor, true);
+                    this.rect(cx-thickness/2-outline, cy-length-gap-outline, 0, 0, thickness+(outline*2), length+(outline*2), this.settings.customCrosshairOutlineColor, true);
+                    this.rect(cx-thickness/2-outline, cy+gap-outline, 0, 0, thickness+(outline*2), length+(outline*2), this.settings.customCrosshairOutlineColor, true);
+                }
+                else
+                {
+                    this.rect(cx - length - outline, cy - (thickness / 2) - outline, 0, 0, (length * 2) + (outline * 2), thickness + (outline * 2), this.settings.customCrosshairOutlineColor, true);
+                    this.rect(cx - (thickness * 0.50) - outline, cy - length - outline, 0, 0, thickness + (outline * 2), (length * 2) + (outline * 2), this.settings.customCrosshairOutlineColor, true);
+                }
             }
-            
-            this.rect(cx - length, cy - (thickness / 2), 0, 0, (length * 2) , thickness, this.settings.customCrosshairColor, true);
-            this.rect(cx - (thickness * 0.50), cy - length, 0, 0, thickness, length * 2, this.settings.customCrosshairColor, true);
+
+
+            this.rect(cx-length-gap, cy-thickness/2 , 0 , 0, length, thickness, this.settings.customCrosshairColor, true);
+            this.rect(cx+gap, cy-thickness/2 , 0 , 0, length, thickness, this.settings.customCrosshairColor, true);
+            this.rect(cx-thickness/2, cy-length-gap, 0, 0, thickness, length, this.settings.customCrosshairColor, true);
+            this.rect(cx-thickness/2, cy+gap, 0, 0, thickness, length, this.settings.customCrosshairColor, true);
+
+
+
+
+
+
         } else {
             if (outline > 0) this.circle(cx, cy, length, thickness + (outline * 2), this.settings.customCrosshairOutlineColor);
             this.circle(cx, cy, length, thickness, this.settings.customCrosshairColor);
@@ -372,7 +403,7 @@ class Utilities {
     crosshairOpacity(t) {
         return this.settings.customCrosshair == 1 ? 0 : t;
     }
-    
+
     countSkins(y) {
         let d = 0;
         for (let i = 0; i < y.skins.length; i++) {
@@ -380,7 +411,7 @@ class Utilities {
         }
         return "U:" + y.skins.length + ", D:" + d;
     }
-    
+
     autoBan() {
         if (!this.isHost) return;
         let autoBan = this.game.players.list.filter(p => this.banList.includes(p.name));
@@ -388,15 +419,15 @@ class Utilities {
             this.hooks.socket.send("c", "/ban " + player.name)
         }
     }
-    
+
     resetBanList() {
         this.banList = [];
     }
-    
+
     antiGuest() {
         if (!this.isHost) return;
         if (!this.settings.antiGuest) return;
-        
+
         let guests = this.game.players.list.filter(p => p.name.match(/Guest_([0-9]{1}|1[0-5])$/));
         for (let player of guests) {
             this.hooks.socket.send("c", "/kick " + player.name)
@@ -409,16 +440,16 @@ class Utilities {
         this.drawFPS();
         requestAnimationFrame(this.render.bind(this));
     }
-    
+
     loop(camera, me, inputs, game) {
         this.me = me;
         this.camera = camera;
         this.game = game;
         this.inputs = inputs;
-        
+
         this.autoBan();
         this.antiGuest();
-        
+
         if (!this.isHost) this.banList = [];
     }
 
