@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Krunker.io Utilities
 // @description  Krunker.io Mod
-// @updateURL    https://github.com/Tehchy/Krunker.io-Utilities/raw/master/userscript.user.js
-// @downloadURL  https://github.com/Tehchy/Krunker.io-Utilities/raw/master/userscript.user.js
-// @version      0.9.5
-// @author       Tehchy
+// @updateURL    https://github.com/bySam/Krunker.io-Utilities/raw/master/userscript.user.js
+// @downloadURL  https://github.com/bySam/Krunker.io-Utilities/raw/master/userscript.user.js
+// @version      1.0
+// @author       bySam
 // @include      /^(https?:\/\/)?(www\.)?(.+)krunker\.io(|\/|\/\?(server|party)=.+)$/
 // @grant        GM_xmlhttpRequest
 // @run-at       document-start
